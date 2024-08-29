@@ -19,6 +19,26 @@ type ConfigColors struct {
 }
 
 /*
+Returns the absolute difference of two numbers.
+
+Arguments:
+    - x (uint32): A value.
+    - y (uint32): A value.
+
+Returns:
+    - uint32: The calculated difference.
+
+Example:
+    a := AbsDiff(x, y);
+*/
+func AbsDiff(x uint32, y uint32) uint32 {
+    if x > y {
+        return x - y;
+    }
+    return y - x;
+}
+
+/*
 Returns the length of vector.
 
 Arguments
@@ -59,25 +79,10 @@ func GetClosestColor(c color.Color, l []color.Color) color.Color {
     for i := 0; i < len(l); i++ {
         r, g, b, _ := c.RGBA();
         r2, g2, b2, _ := l[i].RGBA();
-        var rDiff, gDiff, bDiff uint32;
 
-        if r2 > r {
-            rDiff = r2 - r;    
-        } else {
-            rDiff = r - r2;    
-        }
-
-        if g2 > g {
-            gDiff = g2 - g;    
-        } else {
-            gDiff = g - g2;    
-        }
-
-        if b2 > b {
-            bDiff = b2 - b;    
-        } else {
-            bDiff = b - b2;    
-        }
+        rDiff := AbsDiff(r2, r);
+        gDiff := AbsDiff(g2, g);
+        bDiff := AbsDiff(b2, b);
         
         if GetDistance(rDiff, gDiff, bDiff) < GetDistance(rDistance, gDistance, bDistance) {
             rDistance = rDiff;
