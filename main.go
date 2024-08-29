@@ -71,9 +71,7 @@ Example:
     c := GetClosestColor(toMatch, colors);
 */
 func GetClosestColor(c color.Color, l []color.Color) color.Color {
-    var rDistance uint32 = 0xFFFF;
-    var gDistance uint32 = 0xFFFF;
-    var bDistance uint32 = 0xFFFF;
+    var mDistance uint32 = 0xFFFFFFFF;
     index := 0;
 
     for i := 0; i < len(l); i++ {
@@ -83,11 +81,9 @@ func GetClosestColor(c color.Color, l []color.Color) color.Color {
         rDiff := AbsDiff(r2, r);
         gDiff := AbsDiff(g2, g);
         bDiff := AbsDiff(b2, b);
-        
-        if GetDistance(rDiff, gDiff, bDiff) < GetDistance(rDistance, gDistance, bDistance) {
-            rDistance = rDiff;
-            gDistance = gDiff;
-            bDistance = bDiff;
+        distance := GetDistance(rDiff, gDiff, bDiff);
+        if distance < mDistance {
+            mDistance = distance;
             index = i;
         }
     }
