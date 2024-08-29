@@ -4,15 +4,15 @@
 
 ## Installation
 
-```sh
-go build main.go
-sudo mv main /usr/bin/gowall
+```
+$ go build main.go
+$ sudo mv main /usr/bin/gowall
 ```
 
 ## Usage
 
-```sh
-./gowall <config file path> <image to convert path> <save path>
+```
+$ ./gowall <config file path> <image to convert path> <save path>
 ```
 
 A config file should have a list of colors for your color scheme in JSON format:
