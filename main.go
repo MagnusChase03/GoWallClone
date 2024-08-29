@@ -212,6 +212,22 @@ func ConvertImage(p [][]color.Color, c []color.Color) image.Image {
     return result;
 }
 
+/*
+Saves an image to a path.
+
+Arguments:
+    - p (string): Path to save image.
+    - i (image.Image): Image to save.
+
+Returns:
+    - error: Error saving the image if any.
+
+Example:
+    err := SaveImage("./test.jpeg", i);
+    if err != nil {
+        return err;
+    }
+*/
 func SaveImage(p string, i image.Image) error {
     f, err := os.Create(p);
     if err != nil {
