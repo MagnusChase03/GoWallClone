@@ -5,7 +5,8 @@
 ## Installation
 
 ```
-$ go build main.go
+$ go build -ldflags "-w" main.go
+$ strip main
 $ sudo mv main /usr/bin/gowall
 ```
 
