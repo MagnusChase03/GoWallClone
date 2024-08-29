@@ -71,11 +71,11 @@ Example:
     c := GetClosestColor(toMatch, colors);
 */
 func GetClosestColor(c color.Color, l []color.Color) color.Color {
+    r, g, b, _ := c.RGBA();
     var mDistance uint32 = 0xFFFFFFFF;
     index := 0;
 
     for i := 0; i < len(l); i++ {
-        r, g, b, _ := c.RGBA();
         r2, g2, b2, _ := l[i].RGBA();
 
         rDiff := AbsDiff(r2, r);
