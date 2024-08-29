@@ -298,11 +298,13 @@ func main() {
     c, err := LoadConfig(os.Args[1]);
     if err != nil {
         fmt.Fprintf(os.Stderr, "Error: Failed to load config. %v\n", err);
+        return;
     }
 
     i, err := LoadImage(os.Args[2]);
     if err != nil {
         fmt.Fprintf(os.Stderr, "Error: Failed to load image. %v\n", err);
+        return;
     }
 
     p := LoadPixels(i);
@@ -310,5 +312,6 @@ func main() {
     err = SaveImage(os.Args[3], r);
     if err != nil {
         fmt.Fprintf(os.Stderr, "Error: Failed to save image. %v\n", err);
+        return;
     }
 }
