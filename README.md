@@ -12,7 +12,7 @@ $ sudo mv main /usr/bin/gowall
 ## Usage
 
 ```
-$ ./gowall <config file path> <image to convert path> <save path>
+$ gowall <config file path> <image to convert path> <save path>
 ```
 
 A config file should have a list of colors for your color scheme in JSON format:

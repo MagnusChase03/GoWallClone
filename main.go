@@ -291,7 +291,7 @@ func LoadConfig(p string) ([]color.Color, error) {
 
 func main() {
     if len(os.Args) < 4 {
-        fmt.Fprintf(os.Stderr, "Usage ./gowall <config path> <image path> <save path>\n");
+        fmt.Fprintf(os.Stderr, "Usage: gowall <config path> <image path> <save path>\n");
         return;
     }
 
