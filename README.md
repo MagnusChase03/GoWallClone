@@ -1,6 +1,6 @@
 # GoWallClone
 
-*Clone of the awesome tool gowall https://github.com/Achno/gowall.*
+*Clone of the awesome tool gowall, https://github.com/Achno/gowall, to convert wallpaper colors to match a color scheme.*
 
 ## Installation
 
@@ -12,7 +12,7 @@ sudo mv main /usr/bin/gowall
 ## Usage
 
 ```sh
-./gowall <config file> <image to convert path> <save path>
+./gowall <config file path> <image to convert path> <save path>
 ```
 
 A config file should have a list of colors for your color scheme in JSON format:
