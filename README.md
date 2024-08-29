@@ -44,3 +44,8 @@ A config file should have a list of colors for your color scheme in JSON format:
     ]
 }
 ```
+
+## Example
+
+![Before picture](assets/Before.jpg)
+![After picture](assets/After.jpg)
