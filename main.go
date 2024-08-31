@@ -367,7 +367,7 @@ func GenerateColors(p [][]color.Color, m string) ConfigColors {
         sort.Sort(sort.Reverse(colorPairs));
     }
 
-    size := int(math.Min(float64(len(colorPairs)), 18.0))
+    size := int(math.Min(float64(len(colorPairs)), 21.0))
     colors := make([]string, size);
     for i := 0; i < size; i++ {
         r, g, b, _ := colorPairs[i].Key.RGBA();
