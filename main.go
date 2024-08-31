@@ -11,11 +11,22 @@ import (
 	"os"
 	"strconv"
 	"sync"
+    "sort"
 )
 
 type ConfigColors struct {
     Colors []string
 }
+
+type ColorPair struct {
+    Key color.Color
+    Value int
+}
+type ColorPairList []ColorPair;
+
+func (p ColorPairList) Len() int {return len(p);}
+func (p ColorPairList) Less(i int, j int) bool {return p[i].Value < p[j].Value;}
+func (p ColorPairList) Swap(i int, j int) {p[i], p[j] = p[j], p[i];}
 
 /*
 Returns the absolute difference of two numbers.
@@ -263,6 +274,7 @@ func LoadConfig(p string) ([]color.Color, error) {
     if err != nil {
         return nil, fmt.Errorf("Error: Could not open config file %s. %w", p, err);
     }
+    defer f.Close();
 
     var v ConfigColors;
     d := json.NewDecoder(f);
@@ -289,29 +301,119 @@ func LoadConfig(p string) ([]color.Color, error) {
     return result, nil;
 }
 
+/*
+Save a color scheme to a file.
+
+Arguments:
+    - p (string): The path to save the color scheme to.
+    - c (SaveConfg): The color theme.
+
+Returns:
+    - error: An error if any occured.
+
+Example:
+    err := SaveConfg("./theme.json", c);
+    if err != nil {
+        return err;
+    }
+*/
+func SaveConfg(p string, c ConfigColors) error {
+    f, err := os.Create(p);
+    if err != nil {
+        return fmt.Errorf("Error: Failed to create file %s. %w", p, err);
+    }
+    defer f.Close();
+
+    e := json.NewEncoder(f);
+    err = e.Encode(c);
+    if err != nil {
+        return fmt.Errorf("Error: Failed to write JSON to %s. %w", p, err);
+    }
+
+    return nil;
+}
+
+/*
+Generates a color scheme from an image based on most used colors.
+
+Arguments:
+    - p ([][]color.Color): The pixels of the image.
+
+Returns:
+    - ConfigColors: The colors for the color theme.
+
+Example:
+    c := GenerateColors(p);
+*/
+func GenerateColors(p [][]color.Color) ConfigColors {
+    colorCache := make(map[color.Color]int);
+    for i := 0; i < len(p); i++ {
+        for j := 0; j < len(p[i]); j++ {
+            colorCache[p[i][j]] += 1;
+        }
+    }
+
+    colorPairs := make(ColorPairList, len(colorCache));
+    i := 0;
+    for k, v := range colorCache {
+        colorPairs[i] = ColorPair{Key: k, Value: v};
+        i++; 
+    }
+    sort.Sort(colorPairs);
+    //sort.Sort(sort.Reverse(colorPairs));
+
+    size := int(math.Min(float64(len(colorPairs)), 18.0))
+    colors := make([]string, size);
+    for i := 0; i < size; i++ {
+        r, g, b, _ := colorPairs[i].Key.RGBA();
+        hex := fmt.Sprintf("#%02x%02x%02x", r & 0xFF, g & 0xFF, b & 0xFF);
+        colors[i] = hex;
+    }
+
+    return ConfigColors{
+        Colors: colors,
+    };
+}
+
 func main() {
     if len(os.Args) < 4 {
-        fmt.Fprintf(os.Stderr, "Usage: gowall <config path> <image path> <save path>\n");
+        fmt.Fprintf(os.Stderr, "Usage: gowall <convert|generate> <config path> <image path> [save path]\n");
         return;
     }
 
-    c, err := LoadConfig(os.Args[1]);
-    if err != nil {
-        fmt.Fprintf(os.Stderr, "Error: Failed to load config. %v\n", err);
-        return;
-    }
+    if os.Args[1] == "convert" && len(os.Args) >= 5 {
+        c, err := LoadConfig(os.Args[2]);
+        if err != nil {
+            fmt.Fprintf(os.Stderr, "Error: Failed to load config. %v\n", err);
+            return;
+        }
 
-    i, err := LoadImage(os.Args[2]);
-    if err != nil {
-        fmt.Fprintf(os.Stderr, "Error: Failed to load image. %v\n", err);
-        return;
-    }
+        i, err := LoadImage(os.Args[3]);
+        if err != nil {
+            fmt.Fprintf(os.Stderr, "Error: Failed to load image. %v\n", err);
+            return;
+        }
 
-    p := LoadPixels(i);
-    r := ConvertImage(p, c);
-    err = SaveImage(os.Args[3], r);
-    if err != nil {
-        fmt.Fprintf(os.Stderr, "Error: Failed to save image. %v\n", err);
-        return;
+        p := LoadPixels(i);
+        r := ConvertImage(p, c);
+        err = SaveImage(os.Args[4], r);
+        if err != nil {
+            fmt.Fprintf(os.Stderr, "Error: Failed to save image. %v\n", err);
+        }
+    } else if os.Args[1] == "generate" {
+        i, err := LoadImage(os.Args[3]);
+        if err != nil {
+            fmt.Fprintf(os.Stderr, "Error: Failed to load image. %v\n", err);
+            return;
+        }
+
+        p := LoadPixels(i);
+        c := GenerateColors(p);
+        err = SaveConfg(os.Args[2], c);
+        if err != nil {
+            fmt.Fprintf(os.Stderr, "Error: Failed to save color scheme. %v\n", err);
+        }
+    } else {
+        fmt.Fprintf(os.Stderr, "Usage: gowall <convert|generate> <config path> <image path> [save path]\n");
     }
 }

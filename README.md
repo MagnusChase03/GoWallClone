@@ -13,7 +13,19 @@ $ sudo mv main /usr/bin/gowall
 ## Usage
 
 ```
-$ gowall <config file path> <image to convert path> <save path>
+$ gowall <generate|convert> <config file path> <image path> [save path]
+```
+
+To create a new color scheme from an image:
+
+```
+$ gowall generate <config file path> <image path>
+```
+
+To create a new wallpaper based on a color scheme:
+
+```
+$ gowall convert <config file path> <image path> <save path>
 ```
 
 A config file should have a list of colors for your color scheme in JSON format:
