@@ -13,14 +13,16 @@ $ sudo mv main /usr/bin/gowall
 ## Usage
 
 ```
-$ gowall <generate|convert> <config file path> <image path> [save path]
+$ gowall <generate|convert> <config file path> <image path> [save path|min|max]
 ```
 
 To create a new color scheme from an image:
 
 ```
-$ gowall generate <config file path> <image path>
+$ gowall generate <config file path> <image path> <min|max>
 ```
+
+*Note: Due to the nature of sorting, using a min sort method may result in different color themes every run.*
 
 To create a new wallpaper based on a color scheme:
 

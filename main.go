@@ -338,14 +338,15 @@ Generates a color scheme from an image based on most used colors.
 
 Arguments:
     - p ([][]color.Color): The pixels of the image.
+    - m (string): The method to sort by when generating color scheme.
 
 Returns:
     - ConfigColors: The colors for the color theme.
 
 Example:
-    c := GenerateColors(p);
+    c := GenerateColors(p, "min");
 */
-func GenerateColors(p [][]color.Color) ConfigColors {
+func GenerateColors(p [][]color.Color, m string) ConfigColors {
     colorCache := make(map[color.Color]int);
     for i := 0; i < len(p); i++ {
         for j := 0; j < len(p[i]); j++ {
@@ -359,8 +360,12 @@ func GenerateColors(p [][]color.Color) ConfigColors {
         colorPairs[i] = ColorPair{Key: k, Value: v};
         i++; 
     }
-    sort.Sort(colorPairs);
-    //sort.Sort(sort.Reverse(colorPairs));
+
+    if m == "min" {
+        sort.Sort(colorPairs);
+    } else {
+        sort.Sort(sort.Reverse(colorPairs));
+    }
 
     size := int(math.Min(float64(len(colorPairs)), 18.0))
     colors := make([]string, size);
@@ -376,12 +381,12 @@ func GenerateColors(p [][]color.Color) ConfigColors {
 }
 
 func main() {
-    if len(os.Args) < 4 {
-        fmt.Fprintf(os.Stderr, "Usage: gowall <convert|generate> <config path> <image path> [save path]\n");
+    if len(os.Args) < 5 {
+        fmt.Fprintf(os.Stderr, "Usage: gowall <convert|generate> <config path> <image path> [save path|min|max]\n");
         return;
     }
 
-    if os.Args[1] == "convert" && len(os.Args) >= 5 {
+    if os.Args[1] == "convert" {
         c, err := LoadConfig(os.Args[2]);
         if err != nil {
             fmt.Fprintf(os.Stderr, "Error: Failed to load config. %v\n", err);
@@ -408,12 +413,10 @@ func main() {
         }
 
         p := LoadPixels(i);
-        c := GenerateColors(p);
+        c := GenerateColors(p, os.Args[4]);
         err = SaveConfg(os.Args[2], c);
         if err != nil {
             fmt.Fprintf(os.Stderr, "Error: Failed to save color scheme. %v\n", err);
         }
-    } else {
-        fmt.Fprintf(os.Stderr, "Usage: gowall <convert|generate> <config path> <image path> [save path]\n");
     }
 }
