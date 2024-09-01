@@ -1,16 +1,16 @@
 package main
 
 import (
-	"encoding/json"
-	"fmt"
-	"image"
-	"image/color"
-	"image/jpeg"
-	_ "image/png"
-	"math"
-	"os"
-	"strconv"
-	"sync"
+    "encoding/json"
+    "fmt"
+    "image"
+    "image/color"
+    "image/jpeg"
+    _ "image/png"
+    "math"
+    "os"
+    "strconv"
+    "sync"
     "sort"
 )
 
@@ -52,19 +52,24 @@ func AbsDiff(x uint32, y uint32) uint32 {
 Returns the length of vector.
 
 Arguments
-    - r, g, b (unint32): The vector component lengths.
+    - c (color.Color): A color.
+    - c2 (color.Color): A color.
 
 Returns:
     - uint32: Length of vector.
 
 Example:
-    d := GetDistance(128, 43, 255);
+    d := GetColorDistance(c, c2);
 */
-func GetDistance(r uint32, g uint32, b uint32) uint32 {
-    r2 := float64(r);
-    g2 := float64(g);
-    b2 := float64(b);
-    return uint32(math.Sqrt(math.Pow(r2, 2) + math.Pow(g2, 2) + math.Pow(b2, 2)));
+func GetColorDistance(c color.Color, c2 color.Color) uint32 {
+    r, g, b, _ := c.RGBA();
+    r2, g2, b2, _ := c2.RGBA();
+
+    dr := float64(AbsDiff(r2, r));
+    dg := float64(AbsDiff(g2, g));
+    db := float64(AbsDiff(b2, b));
+
+    return uint32(math.Sqrt(math.Pow(dr, 2) + math.Pow(dg, 2) + math.Pow(db, 2)));
 }
 
 /*
@@ -81,18 +86,12 @@ Example:
     c := GetClosestColor(toMatch, colors);
 */
 func GetClosestColor(c color.Color, l []color.Color) color.Color {
-    r, g, b, _ := c.RGBA();
     var mDistance uint32 = 0xFFFFFFFF;
     index := 0;
 
     for i := 0; i < len(l); i++ {
-        r2, g2, b2, _ := l[i].RGBA();
-
-        rDiff := AbsDiff(r2, r);
-        gDiff := AbsDiff(g2, g);
-        bDiff := AbsDiff(b2, b);
-        distance := GetDistance(rDiff, gDiff, bDiff);
-        if distance < mDistance {
+        distance := GetColorDistance(c, l[i]);
+        if  distance < mDistance {
             mDistance = distance;
             index = i;
         }
